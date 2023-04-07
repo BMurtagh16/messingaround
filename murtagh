@@ -1,0 +1,79 @@
+import tweepy
+import requests
+from bs4 import BeautifulSoup
+import time
+
+# Set up Twitter API credentials
+consumer_key = '9vfPcaz4OVIZ3lfnLOfJE9jWL'
+consumer_secret = 'kQ7KpaRhj9krbUoAzpwWKCqhPLNhOGkh3NKvlLez1ToFeq9tsi'
+access_token = '319328014-sVVWMZrAuvBuSOC5RN9rre1YpZDklsE5sgL1QTGL'
+access_token_secret = 'tvozfOkmjvcjnlVp6anNDHTXPGMky3l62ncgOR8HlrlKi'
+
+# Authenticate to Twitter
+auth = tweepy.OAuthHandler(9vfPcaz4OVIZ3lfnLOfJE9jWL, kQ7KpaRhj9krbUoAzpwWKCqhPLNhOGkh3NKvlLez1ToFeq9tsi)
+auth.set_access_token(a19328014-sVVWMZrAuvBuSOC5RN9rre1YpZDklsE5sgL1QTGL, tvozfOkmjvcjnlVp6anNDHTXPGMky3l62ncgOR8HlrlKi)
+
+# Create API object
+api = tweepy.API(auth)
+
+# Function to get main news story from Forbes
+def get_forbes_news():
+    url = 'https://www.forbes.com/business/'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    main_story = soup.find('a', class_='title-link').text
+    return main_story
+
+# Function to get main news story from BBC Business
+def get_bbc_business_news():
+    url = 'https://www.bbc.com/news/business'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    main_story = soup.find('h3', class_='gs-c-promo-heading__title').text
+    return main_story
+
+# Function to get main news story from RTÉ Business
+def get_rte_business_news():
+    url = 'https://www.rte.ie/news/business/'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    main_story = soup.find('h3', class_='standard-list__headline').text
+    return main_story
+
+# Function to get main news story from Tech Radar
+def get_techradar_news():
+    url = 'https://www.techradar.com/news/business'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    main_story = soup.find('h2', class_='article-name').text
+    return main_story
+
+# Function to get main news story from Financial Times
+def get_ft_news():
+    url = 'https://www.ft.com/business'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    main_story = soup.find('a', class_='js-teaser-heading-link').text
+    return main_story
+
+# Function to tweet the main news story
+def tweet_news():
+    for i in range(3):  # Tweet 3 times, 2 hours apart
+        forbes_news = get_forbes_news()
+        bbc_business_news = get_bbc_business_news()
+        rte_business_news = get_rte_business_news()
+        techradar_news = get_techradar_news()
+        ft_news = get_ft_news()
+
+        # Compose the tweet
+        tweet = f"Daily Business & Tech News:\n- Forbes: {forbes_news}\n- BBC Business: {bbc_business_news}\n- RTÉ Business: {rte_business_news}\n- Tech Radar: {techradar_news}\n- Financial Times: {ft_news}\n#businessnews #technologynews"
+
+        # Tweet the news story
+        api.update_status(status=tweet)
+        print(f'Tweeted: {tweet}')
+
+        # Sleep for 2 hours
+        time.sleep(2 * 60 * 60)
+
+# Call the function to start tweeting news stories
+tweet_news()
